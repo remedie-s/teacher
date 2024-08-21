@@ -19,9 +19,6 @@
     <div class="container-fluid">
       <!-- Small boxes (Stat box) -->
       <div class="row">
-        <div th:each="review, idx : ${paging}">
-          <div th:text="${ review.document }"></div>
-        </div>
         <div class="col-12">
           <div class="card">
             <div class="card-header">
@@ -60,11 +57,32 @@
 			
 			<div class="card-footer clearfix">
 				<ul class="pagination pagination-sm m-0 float-right">
-				<li class="page-item"><a class="page-link" href="#">«</a></li>
-				<li class="page-item"><a class="page-link" href="#">1</a></li>
-				<li class="page-item"><a class="page-link" href="#">2</a></li>
-				<li class="page-item"><a class="page-link" href="#">3</a></li>
-				<li class="page-item"><a class="page-link" href="#">»</a></li>
+					<!--/* 이전, 1페이지씩 쉬프트, 이전페이지가 없다면 비활성처리(disabled 속성) */-->
+					<li class="page-item" th:classappend="${ !paging.hasPrevious } ? 'disabled'">
+						<a class="page-link" th:href="@{|?page=${ paging.number-1 }|}">«</a>
+					</li>
+					
+					<!--/* 
+						- 이동가능한 페이지 번호 나열, 전체나열 -> 제시한 페이지 기준, 앞에 5개, 위에 5개
+						- 로직은 다양하게 구사 가능
+						- 현재 페이지 번호는는 조금 다르게 묘사(두껍게, 색상을 다르게 등등..)
+						- 노출된페이지 번호 조건
+							- 현재페이지값이 현재페이지-5 이상이고(and, &&), 현재페이지+5 이하인 경우만 포함
+							- page >= paging.number-5 and page <= paging.number+5
+							- page >= paging.number-5 and paging.number+5 >= page
+					 */-->
+					<li th:each="page : ${ #numbers.sequence(0, paging.totalPages-1) }"
+						th:classappend="${page == paging.number} ? 'active' "
+						th:if="${ paging.number-5 <= page and page <= paging.number+5 }"
+						class="page-item">
+						<a class="page-link" th:href="@{|?page=${ page }|}" 
+						   th:text="${page+1}"></a>
+					</li>					
+					
+					<!--/* 다음 */-->
+					<li class="page-item" th:classappend="${ !paging.hasNext } ? 'disabled'">
+						<a class="page-link" th:href="@{|?page=${ paging.number+1 }|}">»</a>
+					</li>
 				</ul>
 			</div>
           </div>
