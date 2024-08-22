@@ -26,8 +26,14 @@
               <div class="card-tools">
                 <!--/* 검색 영역 */-->
                 <form method="get" th:action="@{/bbs/list2}" id="searchForm">
+                  <!--검색어 유지-->
+                  <input type="hidden" id="keyword" name="keyword" th:value="${keyword}">
+                  <!--페이지값 유지-->
+                  <input type="hidden" id="page" name="page" th:value="${paging.number}">
 	                <div class="input-group input-group-sm" style="width: 150px;">
-	                  <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                    <!--검색어 입력파트,화면에 노출되는 영역-->
+	                  <input type="text" id="search_keyword" th:value="${keyword}"
+                           class="form-control float-right" placeholder="Search">
 	                  <div class="input-group-append">
 	                    <button type="submit" class="btn btn-default" id="searchBtn">
 	                      <i class="fas fa-search"></i>
@@ -101,20 +107,48 @@
   	// js의 변수 타입은 언제 세팅? => 값이 세팅되면 그때 타입이 결정됨
   	// 순수 js로 기술
 
+  	// 이전, 1, 2, 3 ,.... 다음 -> 페이징 링크 요소 -> 공통적으로 class값이 page-link 였다
     // 현 문서상에 존재하는 모든 요소들 중에, 클레스 값이  page-link 모든 요소를 다 찾아라
     // document.getElementsByClassName("page-link"); => $(".page-link");
-  	const links = document.getElementsByClassName("page-link");
-    console.log( links );
+  	const links = document.getElementsByClassName("page-link"); // 배열로 반환
+    console.log( "페이징 요소의 개수 ", links.length );
 
     // 검색 버튼 클릭 이벤트 잡아서 처리
-    // 검색 버튼을 특정해서, 해당 버튼에 이벤트 등록(재정의) 한다
-    const searchBtn = document.getElementById("searchBtn");
+    // 1. 검색 버튼을 특정해서, 
+    const searchBtn = document.getElementById("searchBtn"); // 단수, 객체는 1개
+    // 2. 해당 버튼에 이벤트 등록(재정의) 한다
+    //    이벤트명 : 'click', 사전에 정의되어 있다
+    //    클릭 이벤트가 발생되면 -> 잠시후에 -> 리스너에 등록된 이벤트 처리 함수(콜백함수)가
+    //    자동으로 호출된다
     searchBtn.addEventListener('click', function(e) {
       e.preventDefault();
       // 하고 싶은 작업 진행
       console.log("버큰 클릭 이벤트 처리");
+      // 2. 검색어 입력태그를 특정해서, 검색어값 세팅
+      document.getElementById("keyword").value 
+        = document.getElementById("search_keyword").value;
+      // 3. 페이징 번호(값) 입력 태그에 세팅
+      document.getElementById("page").value = 0;
+      // 4. 폼태그를 특정해서, 서버에 전송(submit 이벤트(행위)를 진행)
+      document.getElementById("searchForm").submit();
       return false;
     })
+    // 표준함수(함수==메소드)
+    /* 
+      자바의 표준 메소드 문법
+      [모디파이어(접근제어자(private,..), 일반(final, static, abstract,..))] 
+      리턴타입(8+무한대+1) 메소드명 (인자) { 
+        [스테이트먼트];
+        [return [값]]; // [] 생략가능
+      }
+
+      자바스크립트 표준함수
+      function [함수명] ( 인자 ) {
+        [스테이트먼트];
+        [return [값]];
+      }
+    */
+
     
 
   </script>
